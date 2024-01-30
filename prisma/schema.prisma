@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id       String  @id @default(uuid())
+  username String  @unique
+  password String
+  role     String
+  name     String
+  pesan    pesan[]
+}
+
+model menu {
+  id      String    @id @default(uuid())
+  menu    String    @unique
+  harga   Float
+  variant variant[]
+  pesanan pesanan[]
+}
+
+model variant {
+  id     String  @id @default(uuid())
+  menuId String?
+  name   String  @unique
+  menu   menu?   @relation(fields: [menuId], references: [id])
+}
+
+model pesan {
+  id      String    @id @default(uuid())
+  usersId String
+  user    users     @relation(fields: [usersId], references: [id])
+  pesanan pesanan[]
+}
+
+model pesanan {
+  id      String @id @default(uuid())
+  menuId  String @unique
+  pesanId String
+  menu    menu   @relation(fields: [menuId], references: [id])
+  order   pesan  @relation(fields: [pesanId], references: [id])
+}
